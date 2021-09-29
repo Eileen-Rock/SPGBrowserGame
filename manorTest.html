@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content="Eileen Rock">
+    <meta name="Tags" content="Game,Angular,Steam Powered Giraffe,Steampunk">
+    <title>Manor</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="manorTestControl.js"></script>
+    <style>
+        .entry,.landing,.fallThrough {
+            border: 4px groove silver;
+            background-color:rgba(20,20,20,0.3);
+            color: silver;
+            text-align: center;
+            margin: 2% auto;
+            padding: 1%;
+            width: 40%;
+        }
+        table{
+            border-collapse: collapse;
+        }
+        .storyText{
+            border: 4px groove silver;
+            background-color:rgba(20,20,20,0.3);
+            color: silver;
+            text-align: center;
+            margin: 5%;
+            padding: 1%;
+        }
+        body{
+            background-color: black;
+        }
+        h1{
+            border: 4px double silver;
+            background-color:rgba(20,20,20,0.3);
+            color: silver;
+            margin: auto;
+            width: 75%;
+            padding: 1%;
+            text-align: center;
+        }
+        td{
+            background-color: darkgoldenrod;
+            border: 1px solid black;
+            height: 30px;
+            width: 30px;
+            padding: 2px;
+            margin: auto;
+            text-align: center;
+        }
+        .mtSq{
+            background-color: saddlebrown;
+            background-image: url("13213242.png") !important;
+        }
+        .secondFloor{
+            margin: 2% auto;
+            padding: 1%;
+            width: 40%;
+        }
+        .Floor{
+            margin: 2% auto;
+            padding: 1%;
+            width: 40%;
+        }
+        .puzzle{
+            position: relative;
+            margin: auto;
+        }
+
+        #startButton{
+            margin: auto;
+        }
+        button{
+            margin: 1% auto;
+            display: block;
+        }
+        
+        .emptySq{
+            background: black none;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="wrapper">
+<div data-ng-app="manorFloor" data-ng-controller="myCtrlr">
+<!--Basic entry/error screens -->
+    <div class="entry" data-ng-show="startUp">
+    <h1>Welcome to Walter Manor</h1>
+    <p><em>You approach a large, almost ramshackle building. There is no door and, upon inspection, neither is there a doorbell.
+    You approach the entryway and peer inside; it is very dark and absolutely no-one is in sight. You head inside cautiously.</em></p>
+    <p><em>The entrance hallway is cool and dim, and lined by a number of doorways - each of them filled with a darkness as thick as
+    a tar pit. You've just steeled your resolve to go and look through one of them when the light from the door goes out and you
+    are pitched into an absence of light you can feel pressing on the back of your eyeballs.</em></p>
+    <p><em>"Welcome to W-W-Walter Manor! The only way out is to pass," *dramatic pause* "the Trials!"<br>"No it isn't."<br>"Ssshhhsh!
+    As I was saying, ya must p-p-pass the Trials! Navigate each f-floor successfully, then an-answer the riddle of the floor's Guardian ta continue
+    upward!"<br>"This is stupid."<br>"N-nobody asked you! Anyways, ya g-g-go up th' stairs ta start. G-g-gotta walk on every tile, but only once per tile or ya fall.
+        If ya make a mistake, it's b-back ta th' ground-floor with ya!"</em></p>
+        <br><br><br><br>
+    <button type="button" data-ng-click="firstFloor()" id="startButton">Go up the stairs</button>
+</div>
+    <!--Falling through a floor tile -->
+    <div class="fallThrough" data-ng-show="fallen">
+        <h1>You have fallen</h1><p><em>Don't step on the same floor tile more than once! They're delicate, and won't hold your weight for more than that.
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></em></p>
+        <button type="button" data-ng-click="entryWay()" id="returnButton">Try again</button>
+    </div>
+    <!--Leaning on a wall -->
+    <div class="fallThrough" data-ng-show="fallen1"><h1>You have fallen</h1>
+        <p><em>What you thought was solid has given way under your hand. A hidden panel opens and suddenly you're sliding down a chute
+        that ends.....back at the entrance hall. Don't touch the walls!
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></em></p>
+        <button type="button" data-ng-click="entryWay()" id="returnButton1">Try again</button>
+    </div>
+    <!--The Spine's riddle-error -->
+    <div class="fallThrough" data-ng-show="fallen2">
+        <h1>You have answered wrongly</h1>
+        <p><em>The Spine heaves another sigh and places one titanium hand on your shoulder.<br>"Sorry, that wasn't the correct answer. You'll have to start
+        again from the beginning."<br> So saying, he gives you a sudden shove that sends you stumbling back on to the floor tile you'd just walked over...
+        which crumbles beneath your heel and you fall back to start.
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></em></p>
+        <button type="button" data-ng-click="entryWay()" id="returnButton2">Try again</button>
+    </div>
+    <!--Lil Steve's riddle-error -->
+    <div class="fallThrough" data-ng-show="fallen3">
+        <h1>You have answered wrongly</h1>
+        <p><em>"ERR! Wrong answer!" <br> The doll performs more dizzingly acrobatic moves and too late you realize that it is on a collision course with your head. The impact doesn't hurt, per se - the doll is only crocheted wool, after all - but the
+        force is enough to knock you staggering... right back out onto the dangerously unstable floor you had only recently crossed. As the tile crumbles away beneath your feet you hear the doll shout after you:
+            <br>"BETTER LUCK NEXT TIME, SUCKER!"
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></em></p>
+        <button type="button" data-ng-click="entryWay()" id="returnButton3">Try again</button>
+    </div>
+    <!--Bebop's riddle-error -->
+    <div class="fallThrough" data-ng-show="fallen4"><h1>You have answered wrongly</h1>
+        <p><em>"WARNING. WARNING. ERRONEOUS INPUT DETECTED. ENGAGING CORRECTION PROTOCOLS"<br>You start edging away nervously as the blue face on the screen turns entirely upside down for a few moments before righting itself. <br>
+        "ERROR. CORRUPTION FOUND IN CORRECTION PROTOCOLS. LOADING NEXT PROTOCOL IN QUEUE."  A pause. "FLAMETHROWER PROTOCOLS DETECTED. FLAMETHROWERS ONLINE. ENGAGING PROTOCOL." <br> You have all of five heart-stopping seconds to see
+        twin flamethrowers descend from the ceiling before your self-preservation instincts kick in and you take a flying leap back out onto the weakened tiles of the floor behind you. A FWOOSH of heat and accompany you partway down your descent,
+        but upon inspection when you reach the bottom you find yourself only lightly singed.
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br></em></p>
+        <button type="button" data-ng-click="entryWay()" id="returnButton4">Try again</button>
+    </div>
+    <!--Zero's riddle-error -->
+    <div class="fallThrough" data-ng-show="fallen5"><h1>You have answered wrongly</h1>
+        <p><em>Zero looks at you with such pitiful puppy-dog eyes (and how a robot manages that you have no idea) that you feel immediately guilty and start
+        mentally cataloguing the contents of your pockets for something to give him so the look goes away.<br>"I know you mean well," he says "But that wasn't the
+        right answer. Now you're gonna have to start all over!"<br> He sounds so upset you step forward to try and give him a hug... only to be met with a shove in
+        the other direction. This time you stagger back the step and he doesn't reach out to catch you. You fall through the floor.
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br></em></p>
+        <button type="button" data-ng-click="entryWay()" id="returnButton5">Try again</button>
+    </div>
+    <!--Rabbit's riddles-error (they all lead here) -->
+    <div class="fallThrough" data-ng-show="fallen6"><h1>You have answered wrongly</h1>
+        <p><em>"WRONG!"<br>The yell takes you by surprise and when you freeze, Rabbit gives you a shove. You stumble back a step into... nothing. A chute
+        has opened up in the floor behind you and you start to fall. <br>"Better luck next time! A-hahahahaha!" Rabbit calls down the chute after you, just before the darkness
+            swallows you whole.
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></em></p>
+        <button type="button" data-ng-click="entryWay()" id="returnButton6">Try again</button>
+    </div>
+<!--The Spine's Floor -->
+    <div class="Floor" data-ng-show="floor1">
+        <h1>First Floor</h1>
+        <button type="button" data-ng-click="firstLanding()" id="firstLanding" data-ng-show="butten">Go to the landing</button>
+
+        <table id="floorPuzzle1" class="puzzle">
+            <tr>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td style="background-color: black; color: silver;">End</td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(0); checkTiles()" style="background-image:url({{colorCols[0].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(1)" style="background-image:url({{colorCols[1].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(2)" style="background-image:url({{colorCols[2].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(3)" style="background-image:url({{colorCols[3].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(4)" style="background-image:url({{colorCols[4].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(5)" style="background-image:url({{colorCols[5].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(6)" style="background-image:url({{colorCols[6].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(7)" style="background-image:url({{colorCols[7].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(8)" style="background-image:url({{colorCols[8].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(9)" style="background-image:url({{colorCols[9].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(10)" style="background-image:url({{colorCols[10].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(11)" style="background-image:url({{colorCols[11].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(12)" style="background-image:url({{colorCols[12].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(13)" style="background-image:url({{colorCols[13].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(14)" style="background-image:url({{colorCols[14].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(15)" style="background-image:url({{colorCols[15].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(16)" style="background-image:url({{colorCols[16].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(17)" style="background-image:url({{colorCols[17].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(18)" style="background-image:url({{colorCols[18].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(19)" style="background-image:url({{colorCols[19].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(20)" style="background-image:url({{colorCols[20].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(21)" style="background-image:url({{colorCols[21].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td style="background-color: black; color: silver;">Start</td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+            </tr>
+        </table>
+        <p class="storyText"><em>You climb the stairs - my, there are quite a number of them - and keep going until you reach the top. As you stand on the landing, you look across
+            the room and see a gleam of green eyes watching you from the stairs. You start forward, unsure but willing to try.</em></p>
+
+
+    </div>
+    <div class="landing" data-ng-show="landing1">
+        <h1>You have reached the stairs to the second floor</h1>
+        <h2>The Guardian: The Spine</h2>
+        <p><em>He looks down at you and sighs, a big gust of steam heading for the ceiling. You blink up at him, mildly terrified
+        as his already impressive height is enhanced by the fact that he is standing on the first step of the stairs.</em></p>
+        <p><em>"Let me make this clear up front. This was all Rabbit's idea. She won't give me back my copy of 'The Old Man and the Sea'
+        until you finish this."</em></p><p><em>He sends a frosty glare to the next floor landing before returning his attention to you.</em></p>
+        <p><em>"I'm supposed to ask you a riddle. So. What is 2 + 2?"</em></p>
+        <p><em>A burst of affronted steam and some unintelligible noises come from the next floor's landing and the Spine leans back to give said landing
+        a deadpan look.</em></p>
+        <p><em>"You failed to specify, Rabbit. I've asked the question, now they have to answer it. That's the rules you set up."</em></p>
+        <p><em>You timidly open your mouth to reply,</em></p>
+        <input type="text" data-ng-model="answer" value="{{answer}}">
+
+        <button type="button" data-ng-click="secondFloor()" id="secondFloor">Go up the stairs</button>
+    </div>
+<!--Lil Steve's Floor -->
+    <div class="secondFloor" data-ng-show="floor2">
+        <h1>Second Floor</h1>
+        <button type="button" data-ng-click="secondLanding()" id="secondLanding" data-ng-show="butten">Go to the landing</button>
+
+        <table id="floorPuzzle2" class="puzzle">
+            <tr>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td style="background-color: black; color: silver;">End</td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(0); checkTiles()" style="background-image:url({{colorCols[0].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(1)" style="background-image:url({{colorCols[1].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(2)" style="background-image:url({{colorCols[2].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(3)" style="background-image:url({{colorCols[3].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(4)" style="background-image:url({{colorCols[4].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(5)" style="background-image:url({{colorCols[5].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(6)" style="background-image:url({{colorCols[6].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(7)" style="background-image:url({{colorCols[7].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(8)" style="background-image:url({{colorCols[8].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(9)" style="background-image:url({{colorCols[9].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(10)" style="background-image:url({{colorCols[10].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(11)" style="background-image:url({{colorCols[11].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(12)" style="background-image:url({{colorCols[12].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(13)" style="background-image:url({{colorCols[13].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(14)" style="background-image:url({{colorCols[14].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(15)" style="background-image:url({{colorCols[15].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(16)" style="background-image:url({{colorCols[16].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(17)" style="background-image:url({{colorCols[17].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(18)" style="background-image:url({{colorCols[18].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(19)" style="background-image:url({{colorCols[19].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(20)" style="background-image:url({{colorCols[20].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(21)" style="background-image:url({{colorCols[21].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(22)" style="background-image:url({{colorCols[22].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(23)" style="background-image:url({{colorCols[23].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(24)" style="background-image:url({{colorCols[24].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(25)" style="background-image:url({{colorCols[25].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(26)" style="background-image:url({{colorCols[26].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(27)" style="background-image:url({{colorCols[27].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(28)" style="background-image:url({{colorCols[28].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(29)" style="background-image:url({{colorCols[29].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(30)" style="background-image:url({{colorCols[30].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(31)" style="background-image:url({{colorCols[31].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(32)" style="background-image:url({{colorCols[32].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(33)" style="background-image:url({{colorCols[33].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(34)" style="background-image:url({{colorCols[34].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(35)" style="background-image:url({{colorCols[35].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(36)" style="background-image:url({{colorCols[36].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(37)" style="background-image:url({{colorCols[37].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(38)" style="background-image:url({{colorCols[38].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(39)" style="background-image:url({{colorCols[39].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(40)" style="background-image:url({{colorCols[40].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(41)" style="background-image:url({{colorCols[41].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(42)" style="background-image:url({{colorCols[42].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(43)" style="background-image:url({{colorCols[43].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td style="background-color: black; color: silver;">Start</td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+            </tr>
+        </table>
+        <p class="storyText"><em>"You've answered correctly, so go right ahead. I'm going to go make Rabbit give me back my novel."
+            <br><br>The Spine walks off and leaves you at the base of the stairs; you climb them and find yourself in a new room.</em></p>
+
+
+    </div>
+    <div class="landing" data-ng-show="landing2">
+        <h1>You have reached the stairs to the third floor</h1>
+        <h2>The Guardian: Lil' Steve</h2>
+        <p><em>You stop and stare in bewilderment at the small doll sitting on the bottom-most step of the stairs in front of you. It's propped up on the step behind it, but you cannot see how a doll is supposed to offer you a riddle. You
+        step forward to get a better look despite your misgivings, coming almost nose-to-crocheted-moustache with the doll before stopping. One second of breathless silence hangs in the air like a priceless antique vase before being
+        comprehensively shattered.</em></p><p><em>"HI-YAH!"</em></p><p><em>The doll springs into motion literally, bouncing off your forehead, the bannister, and a small iron wall sconce in a series of moves you would not have believed
+        possible had you not seen them with your own eyes. You fall on your butt as the doll comes to a stop on a stair level with your eyes.</em></p><p><em>"BOO-YAH! I'm Lil' Steve, and you will not pass me unless you can answer my riddle!"
+        A brief pause. "What is my answer for EVERYTHING?"</em></p><p><em>You blink in confusion before remembering the very first thing this little doll had done to you. You open your mouth and reply: </em></p>
+        <input type="text" data-ng-model="answer1" value="{{answer1}}">
+        <br><br><br>
+
+        <button type="button" data-ng-click="thirdFloor()" id="thirdFloor">Go up the stairs</button>
+    </div>
+<!--Bebop's Floor -->
+    <div class="Floor" data-ng-show="floor3">
+        <h1>Third Floor</h1>
+        <button type="button" data-ng-click="thirdLanding()" id="thirdLanding" data-ng-show="butten">Go to the landing</button>
+
+        <table id="floorPuzzle3" class="puzzle">
+            <tr>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td style="background-color: black; color: silver;">End</td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+        </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(0); checkTiles()" style="background-image:url({{colorCols[0].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(1)" style="background-image:url({{colorCols[1].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(2)" style="background-image:url({{colorCols[2].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(3)" style="background-image:url({{colorCols[3].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(4)" style="background-image:url({{colorCols[4].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(5)" style="background-image:url({{colorCols[5].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(6)" style="background-image:url({{colorCols[6].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(7)" style="background-image:url({{colorCols[7].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(8)" style="background-image:url({{colorCols[8].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(9)" style="background-image:url({{colorCols[9].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(10)" style="background-image:url({{colorCols[10].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(11)" style="background-image:url({{colorCols[11].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(12)" style="background-image:url({{colorCols[12].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(13)" style="background-image:url({{colorCols[13].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(14)" style="background-image:url({{colorCols[14].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(15)" style="background-image:url({{colorCols[15].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(16)" style="background-image:url({{colorCols[16].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(17)" style="background-image:url({{colorCols[17].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(18)" style="background-image:url({{colorCols[18].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(19)" style="background-image:url({{colorCols[19].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(20)" style="background-image:url({{colorCols[20].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(21)" style="background-image:url({{colorCols[21].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(22)" style="background-image:url({{colorCols[22].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(23)" style="background-image:url({{colorCols[23].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(24)" style="background-image:url({{colorCols[24].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(25)" style="background-image:url({{colorCols[25].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(26)" style="background-image:url({{colorCols[26].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(27)" style="background-image:url({{colorCols[27].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(28)" style="background-image:url({{colorCols[28].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(29)" style="background-image:url({{colorCols[29].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(30)" style="background-image:url({{colorCols[30].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(31)" style="background-image:url({{colorCols[31].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(32)" style="background-image:url({{colorCols[32].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(33)" style="background-image:url({{colorCols[33].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(34)" style="background-image:url({{colorCols[34].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(35)" style="background-image:url({{colorCols[35].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(36)" style="background-image:url({{colorCols[36].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(37)" style="background-image:url({{colorCols[37].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(38)" style="background-image:url({{colorCols[38].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(39)" style="background-image:url({{colorCols[39].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(40)" style="background-image:url({{colorCols[40].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(41)" style="background-image:url({{colorCols[41].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(42)" style="background-image:url({{colorCols[42].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(43)" style="background-image:url({{colorCols[43].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td style="background-color: black; color: silver;">Start</td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+            </tr>
+        </table>
+        <p class="storyText"><em>"YEAH! That's right! Now get going before I change my mind!"<br> You consider a wide variety of responses to that, starting with "You don't have one, you're a doll," going through speculation about what a
+        crocheted brain would look like, and ending with "'K thanks bye." You opt instead to remain quiet and instead scurry past the doll up the stairs and out onto the next floor.</em></p>
+
+
+    </div>
+    <div class="landing" data-ng-show="landing3">
+        <h1>You have reached the stairs to the fourth floor</h1>
+        <h2>The Guardian: Bebop</h2>
+        <p><em>There is nobody waiting for you on the step of the next staircase, and you rush forward thinking that perhaps this floor had been skipped as far as "guardians" or whatever went. Just as you go to put your foot on the bottom step, a
+        screen drops down from the ceiling and a voice booms from everywhere and nowhere at once.</em></p><p><em>"ALERT. ALERT. ACCESS TO STAIRCASE DETECTED. INITIATING RIDDLE PROTOCOL."</em></p><p><em>At the first word you jumped a good foot into the air
+        and only narrowly avoided landing on the fragile floor tiles you had just left. You stare at the blue face on the screen as it booms in a robotic monotone before nearly having your third heart attack of the hour as the screen rushes toward you.</em></p>
+        <p><em>" A RIDDLE IS A QUESTION OR STATEMENT INTENTIONALLY PHRASED SO AS TO REQUIRE INGENUITY IN ASCERTAINING ITS ANSWER OR MEANING; THIS ACTIVITY IS USUALLY PRESENTED AS A 'GAME.'" A brief pause. "I HAVE FOUND A SUITABLE QUESTION:
+            WHAT IS THE BEGINNING OF EVERYTHING, AND THE END OF TIME AND SPACE?"</em></p>
+        <input type="text" data-ng-model="answer2" value="{{answer2}}">
+
+        <button type="button" data-ng-click="fourthFloor()" id="fourthFloor">Go up the stairs</button>
+    </div>
+<!--Zero's Floor -->
+    <div class="Floor" data-ng-show="floor4">
+        <h1>Fourth Floor</h1>
+        <button type="button" data-ng-click="fourthLanding()" id="fourthLanding" data-ng-show="butten">Go to the landing</button>
+
+        <table id="floorPuzzle4" class="puzzle">
+            <tr>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td style="background-color: black; color: silver;">End</td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+        </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(0); checkTiles()" style="background-image:url({{colorCols[0].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(1)" style="background-image:url({{colorCols[1].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(2)" style="background-image:url({{colorCols[2].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(3)" style="background-image:url({{colorCols[3].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(4)" style="background-image:url({{colorCols[4].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(5)" style="background-image:url({{colorCols[5].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(6)" style="background-image:url({{colorCols[6].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(7)" style="background-image:url({{colorCols[7].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(8)" style="background-image:url({{colorCols[8].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(9)" style="background-image:url({{colorCols[9].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(10)" style="background-image:url({{colorCols[10].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(11)" style="background-image:url({{colorCols[11].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(12)" style="background-image:url({{colorCols[12].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(13)" style="background-image:url({{colorCols[13].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(14)" style="background-image:url({{colorCols[14].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(15)" style="background-image:url({{colorCols[15].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(16)" style="background-image:url({{colorCols[16].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(17)" style="background-image:url({{colorCols[17].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(18)" style="background-image:url({{colorCols[18].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(19)" style="background-image:url({{colorCols[19].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(20)" style="background-image:url({{colorCols[20].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(21)" style="background-image:url({{colorCols[21].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(22)" style="background-image:url({{colorCols[22].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(23)" style="background-image:url({{colorCols[23].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(24)" style="background-image:url({{colorCols[24].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(25)" style="background-image:url({{colorCols[25].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(27)" style="background-image:url({{colorCols[27].colr}})"></td>
+                <td class="emptySq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(28)" style="background-image:url({{colorCols[28].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(29)" style="background-image:url({{colorCols[29].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(30)" style="background-image:url({{colorCols[30].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(31)" style="background-image:url({{colorCols[31].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(32)" style="background-image:url({{colorCols[32].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(33)" style="background-image:url({{colorCols[33].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(34)" style="background-image:url({{colorCols[34].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(35)" style="background-image:url({{colorCols[35].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(36)" style="background-image:url({{colorCols[36].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td style="background-color: black; color: silver;">Start</td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+            </tr>
+        </table>
+        <p class="storyText"><em>"CORRECT ANSWER DETECTED. PROCEED TO NEXT LEVEL."</em></p>
+
+    </div>
+    <div class="landing" data-ng-show="landing4">
+        <h1>You have reached the stairs to the fifth floor</h1>
+        <h2>The Guardian: Zero</h2>
+        <p><em>You reach the other side of the room and find him standing on the bottom-most step just like the other three. He
+        is giving you a large, friendly, grin and you smile back a little hesitantly.</em></p>
+        <p><em>"WHAT ARE YOU DOING IN MY HOUSE?"</em></p>
+        <p><em>The yell takes you completely by surprise and you jump back, nearly falling through the floor tile. He grabs your arm to stop you from falling with a
+            slightly apologetic expression.</em></p><p><em>"Hey, sorry 'bout that. The kids used to love me when I said it! Anyway, Rabbit said
+    you were coming here for a riddle and then she gave me this piece of paper that I'm supposed to read." *paper rustles* "Let's see...'What is a
+    prisoner's favorite bit of punctuation?' Huh. What a strange question. I mean, wouldn't each prisoner have his own favorite bit of punctuation?
+    Wouldn't asking them be rude? I'm thinkin' that this isn't a very good question." He pauses for thought. "I know! I'll ask you a better one.
+    What kind of world is it in the winter?"</em></p>
+        <input type="text" data-ng-model="answer3" value="{{answer3}}">
+
+        <button type="button" data-ng-click="fifthFloor()" id="fifthFloor">Go up the stairs</button>
+    </div>
+<!--Rabbit's Floor -->
+    <div class="Floor" data-ng-show="floor5">
+        <h1>Fifth Floor</h1>
+        <button type="button" data-ng-click="fifthLanding()" id="fifthLanding" data-ng-show="butten">Go to the landing</button>
+
+        <table id="floorPuzzle5" class="puzzle">
+            <tr>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td style="background-color: black; color: silver;">End</td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+            <td class="emptySq"></td>
+        </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(0); checkTiles()" style="background-image:url({{colorCols[0].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(1)" style="background-image:url({{colorCols[1].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(2)" style="background-image:url({{colorCols[2].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(3)" style="background-image:url({{colorCols[3].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(4)" style="background-image:url({{colorCols[4].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(5)" style="background-image:url({{colorCols[5].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(6)" style="background-image:url({{colorCols[6].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(7)" style="background-image:url({{colorCols[7].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(8)" style="background-image:url({{colorCols[8].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(9)" style="background-image:url({{colorCols[9].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(10)" style="background-image:url({{colorCols[10].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(11)" style="background-image:url({{colorCols[11].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(12)" style="background-image:url({{colorCols[12].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(13)" style="background-image:url({{colorCols[13].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(14)" style="background-image:url({{colorCols[14].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(15)" style="background-image:url({{colorCols[15].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(16)" style="background-image:url({{colorCols[16].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(17)" style="background-image:url({{colorCols[17].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(18)" style="background-image:url({{colorCols[18].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(19)" style="background-image:url({{colorCols[19].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(20)" style="background-image:url({{colorCols[20].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(21)" style="background-image:url({{colorCols[21].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(22)" style="background-image:url({{colorCols[22].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(23)" style="background-image:url({{colorCols[23].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(24)" style="background-image:url({{colorCols[24].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(25)" style="background-image:url({{colorCols[25].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(26)" style="background-image:url({{colorCols[26].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(27)" style="background-image:url({{colorCols[27].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(28)" style="background-image:url({{colorCols[28].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(29)" style="background-image:url({{colorCols[29].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(30)" style="background-image:url({{colorCols[30].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(31)" style="background-image:url({{colorCols[31].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(32)" style="background-image:url({{colorCols[32].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(33)" style="background-image:url({{colorCols[33].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(34)" style="background-image:url({{colorCols[34].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(35)" style="background-image:url({{colorCols[35].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(36)" style="background-image:url({{colorCols[36].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(37)" style="background-image:url({{colorCols[37].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(38)" style="background-image:url({{colorCols[38].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(39)" style="background-image:url({{colorCols[39].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(40)" style="background-image:url({{colorCols[40].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(41)" style="background-image:url({{colorCols[41].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(42)" style="background-image:url({{colorCols[42].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(43)" style="background-image:url({{colorCols[43].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(44)" style="background-image:url({{colorCols[44].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(45)" style="background-image:url({{colorCols[45].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(46)" style="background-image:url({{colorCols[46].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(47)" style="background-image:url({{colorCols[47].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(48)" style="background-image:url({{colorCols[48].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(49)" style="background-image:url({{colorCols[49].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(50)" style="background-image:url({{colorCols[50].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(51)" style="background-image:url({{colorCols[51].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(52)" style="background-image:url({{colorCols[52].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(53)" style="background-image:url({{colorCols[53].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(54)" style="background-image:url({{colorCols[54].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(55)" style="background-image:url({{colorCols[55].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(56)" style="background-image:url({{colorCols[56].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(57)" style="background-image:url({{colorCols[57].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(58)" style="background-image:url({{colorCols[58].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(59)" style="background-image:url({{colorCols[59].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(60)" style="background-image:url({{colorCols[60].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(61)" style="background-image:url({{colorCols[61].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(62)" style="background-image:url({{colorCols[62].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(63)" style="background-image:url({{colorCols[63].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(64)" style="background-image:url({{colorCols[64].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(65)" style="background-image:url({{colorCols[65].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(66)" style="background-image:url({{colorCols[66].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(67)" style="background-image:url({{colorCols[67].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(68)" style="background-image:url({{colorCols[68].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(69)" style="background-image:url({{colorCols[69].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(70)" style="background-image:url({{colorCols[70].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(71)" style="background-image:url({{colorCols[71].colr}})"></td>
+                <td data-ng-mouseenter="walkTile(72)" style="background-image:url({{colorCols[72].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td data-ng-mouseenter="walkTile(73)" style="background-image:url({{colorCols[73].colr}})"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+                <td class="mtSq" data-ng-mouseenter="wallTile()"></td>
+            </tr>
+            <tr>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td style="background-color: black; color: silver;">Start</td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+                <td class="emptySq"></td>
+            </tr>
+        </table>
+        <p class="storyText"><em>"Yup! You got it!" <br><br>He gives you a big hug and pats you between
+    your shoulder blades while making an expansive gesture to the stairs behind him. Slightly winded, you give him an agreeable
+    nod and a big smile before climbing the stairs.</em></p>
+
+    </div>
+    <div class="landing" data-ng-show="landing5">
+        <h1>You have reached the top of the stairs</h1>
+        <h2>The Guardian: Rabbit</h2>
+        <p><em>This time there is nobody waiting for you on the bottom-most step. Somewhat warily, you stop and look around for several minutes before proceeding
+        up the stairs. There is a door at the top this time, and you make sure to swing it wide open so that it comes to a stop against the wall before you walk through it.
+        The room on the other side is darker than the entrance hall, if that was even possible, and your nerves ratchet tighter as the door slams shut of its own accord
+        behind you. You nearly jump out of your skin when a thin, metallic hand comes to rest on your shoulder and your accompanying shriek bounces off the walls.</em></p>
+        <p><em>"Hah! I haven't gotten a reaction that good in y-years!"</em></p>
+        <p><em>The owner of the voice comes around to face you, hand never leaving your shoulder. Twin lights, one blue, one green, illuminate a pale face with a mischievous
+        grin - she had apparently anticipated your reaction. </em></p>
+        <p><em>"So! Y-y-y-you ma-made it past my brothas, but now ya gotta answer my questions. That's right, questions. Plural. Ya think this was g-g-g-g-gonna be THAT
+            easy?" She pauses. "S-so! First question: What is the best month for a PARADE?"</em></p>
+        <input type="text" data-ng-model="answer4" value="{{answer4}}">
+
+        <button type="button" data-ng-click="riddleOne()" id="check1">Answer</button>
+    </div>
+    <div class="landing" data-ng-show="landing5_1">
+        <h1>You have answered correctly</h1>
+        <p><em>"S-say, you're pretty s-slifty."</em></p><p><em>She seems delighted by your answer, however, and takes her hand off your shoulder to do some sort of
+    combination wave and hand gesture that you can't quite see because it's still pretty dark in the room - not as dark as it was before, you note with bemusement, but
+    still dark. She seems to realize you can't see what she's doing with her hands because they drop back to her sides as she pins you with a look.</em></p>
+        <p><em>"Alrighty, let's s-see if you can do it twice! W-w-w-what kind of soup weighs two THOUSAND pounds?"</em></p>
+        <p><em>She lunges forward on the word 'thousand' and suddenly you're eye-to-optic with her at a range of about thirteen centimeters. Nearly swallowing your own tongue
+            in surprise, you manage to stutter out your reply: </em></p>
+        <input type="text" data-ng-model="answer5" value="{{answer5}}">
+
+        <button type="button" data-ng-click="riddleTwo()" id="check2">Answer</button>
+    </div>
+    <div class="landing" data-ng-show="landing5_2">
+        <h1>You have answered correctly</h1>
+        <p><em>She frowns, disappointment clear on her face. You realize suddenly that the room is getting brighter with every question you get right. You can see
+        other doors now, all of them closed. The doors appear to be newer than the frames, though it's still too dim to tell for sure.</em></p>
+        <p><em>"Say, have y-y-you ever played this game before? N-n-nobody ever got that last one right!"</em></p>
+        <p><em>She eyes you for a long, drawn-out moment and you can feel a cold sweat rolling down your spine. She grins suddenly, displaying teeth like military gravestones
+        and the various cogs and wheels required to let her move her jaw.</em></p>
+        <p><em>"I knew y-y-y-you were my kinda person! You'll definitely get this: W-w-what kind of rock is one thousand, seven hundred sixty yards long?" </em></p>
+        <p><em>Her grin gets unnervingly wide and you try to take a subtle step back even as you reply: </em></p>
+        <input type="text" data-ng-model="answer6" value="{{answer6}}">
+
+        <button type="button" data-ng-click="riddleThree()" id="check3">Answer</button>
+    </div>
+<!--A Winner Is You -->
+    <div class="landing" data-ng-show="winner">
+        <h1>You have answered all questions correctly</h1>
+        <p><em>No sooner have the words left your mouth than she flings her arms around you in a hug just this side of painful. The noise she makes is
+        somewhere between a squeal and the sound of an enthusiastic teapot and your hair is suddenly dripping with condensation.</em></p>
+        <p><em>"Y-y-y-y-you did it! You completed the challenge! Your prize," she reaches into a previously hidden pocket, "is one Walter Corporation - certified
+        lollipop! Walter Workers love them!"</em></p><p><em>She hands you a decently sized lollipop wrapped in suspiciously plain wrapper. When you hesitate before
+    pulling the wrapper off she makes excited 'go-ahead!' gestures to you that you can see plainly in the now brightly-lit room. You hesitantly pull the wrapper off,
+    to find an electrically blue hard candy on a stick. You pop it into your mouth with even more trepidation, but while you did feel what you think might have been an
+    electric shock when the lollipop first touched your tongue, the lollipop is, in itself, delicious - your favorite flavor and deliciously sugary. <br>As you suck on the
+    'pop, Rabbit disappears behind you and you hear the sound of a door opening... and then closing again. Panicked, you spin around and tug on the door behind you. It is
+    locked firmly and resists your tugging even when you put your back into it. Speaking around the lollipop with difficulty, you ask yourself an important question: </em></p>
+        <button type="button" data-ng-click="winner2()" id="helpMe">How am I supposed to get down?</button>
+    </div>
+    <div class="landing" data-ng-show="winner_2">
+        <h1>Help Arrives</h1>
+        <p><em>Your question hangs hollowly in the room, the echoes mocking you. Suddenly, something hits the door directly opposite you with an almighty BANG. You
+        jump and press yourself against the locked door behind you - there's no place to hide and the corner seems almost malevolent, with shadows clinging to it
+        stubbornly like a bath ring clings to ceramic.<br> Another BANG follows, and on the third the door splinters into the room, allowing an enormous paw entry. The
+        paw removes itself and a young man in a mask walks through the remains of the door and frame with an almost studious nonchalance.</em></p>
+        <p><em>"Hey, I'm Peter A. Walter VI. I own the mansion and, nominally, the robots."</em></p>
+        <p><em>Dread drops into your stomach like a lead weight - you had trespassed and now the owner had come to kick you out. What if he pressed charges? What if-<br>
+        Peter seems to pick up on your train of thought and raises his hands to about chest height.</em></p>
+        <p><em>"Woah, calm down, you're hyperventilating. I don't mind that you're here, really, but The Spine mentioned Rabbit was playing games with an outsider earlier
+        and I just came to make sure that you didn't wind up in a pickle, shall we say." He looks around. "Good thing, too. I'm not even sure when or why Rabbit installed
+        these doors, she knows I don't care for them. Well, I'll make her take them down when I catch her. Need a ride back to the front door? Marshmallow here
+        can seat us both."</em></p>
+        <button type="button" data-ng-click="entryWay()" id="reStart">Hop on the giant cat</button>
+    </div>
+</div>
+
+</div>
+</body>
+</html>
